@@ -2,11 +2,11 @@
 Design a website and then embed it in the ESP8266 firmware
 
 # How to use
-1) Edit the webpage as you see fit
-2) Run the following command:
+1. Edit the webpage as you see fit
+2. Run the following command:
     python generate_arduino_webpage.py > website.h
-3) Copy the website.h file into the Arduino project
-4) Compile the Arduino project and load to the board
+3. Copy the website.h file into the Arduino project
+4. Compile the Arduino project and load to the board
 
 # Notes:
 * This should handle any html, css, jpg, or png file
