@@ -159,6 +159,27 @@ void setup ( void ) {
 
   setupPageHandlers();
 
+  server.on( "/mode", []() {
+
+    if (wifiMode == WIFI_MODE_CLIENT)
+    {
+      server.send ( 200, "text/plain", "wificlient" );
+    }
+    else
+    {
+      server.send ( 200, "text/plain", "accesspoint" );
+    }    
+  });
+
+  server.on( "/ssid", []() {
+    server.send ( 200, "text/plain", ssid );    
+  });
+
+  server.on( "/password", []() {
+    server.send ( 200, "text/plain", password );    
+  });
+  
+
   server.on( "/buttonlink.html", []() {
     strcpy(ssid, "dd-wrt");
     strcpy(password, "ELGALLOGRINGO");
@@ -192,7 +213,7 @@ void setup ( void ) {
     //sendBinaryFile("text/html", _ssid_success_html, _ssid_success_html_len);
     server.send ( 200, "text/plain", "Writing SSID and password to EEPROM and resetting" );
     
-    //writeSSIDandPasswordToEEPROMandReset();
+    writeSSIDandPasswordToEEPROMandReset();
     
   });
   

@@ -95,12 +95,12 @@ def getMimeTypeFromFilename(filename):
         
 
 # Print out the extern header
-print "extern ESP8266WebServer server;\n\n"
+print "extern ESP8266WebServerFast server;\n\n"
 
 # Get a complete list of files and generate their C-code array equivalents
 for (dir, _, files) in os.walk("./"):
      for f in files:
-        if f.endswith(".h") or f.endswith(".py") or f.endswith(".DS_Store"):
+        if f.endswith(".h") or f.endswith(".py") or f.endswith(".DS_Store") or '.' not in f:
             continue
          
      	path = os.path.join(dir, f)
@@ -112,7 +112,7 @@ print generateHandlerSetupPreamble()
 print generateRootLambda()
 for (dir, _, files) in os.walk("./"):
      for f in files:
-        if f.endswith(".h") or f.endswith(".py") or f.endswith(".DS_Store"):
+        if f.endswith(".h") or f.endswith(".py") or f.endswith(".DS_Store") or '.' not in f:
             continue
          
      	path = os.path.join(dir, f)
