@@ -7,6 +7,7 @@ void sendBinaryFile(String mimeType, const char *realword, int realLen)
   char chopped_send_buffer[BINARY_BUFFER_SIZE];
   
   WiFiClient client = server.client();
+  server.setContentLength(realLen);
   server.send(200, mimeType, "");
     
   int remaining = realLen;
