@@ -41,6 +41,7 @@
 #include "webpage.h"
 
 
+//void (* resetFunc)(void) = 0;
 void setupWiFiAccessPoint();
 void setupWiFiClient();
 
@@ -121,18 +122,21 @@ void writeSSIDandPasswordToEEPROMandReset()
 
   delay(1000);
   Serial.print("Resetting...");
-
+//  resetFunc();
   ESP.restart();
 }
 
 
 ESP8266WebServer server ( 80 );
+File f;
+String uploadError;
 
 int hardResetPin = 12;
 
 void setup ( void ) {
 // Read the SSID and PASSWORD from EEPROM
   EEPROM.begin(512);
+  SPIFFS.begin();
   
 	Serial.begin ( 115200 );
 
@@ -158,6 +162,75 @@ void setup ( void ) {
   }
 
   setupPageHandlers();
+
+  // Upload new HTML files
+  // This responds to commands like:
+  //    curl -F "file=@css/dropdown.css;filename=/css/dropdown.css" 192.168.4.1/update
+  //    curl -F "file=@index.html;filename=/index.html" 192.168.4.1/update
+  // To upload web pages. This is using the underlying SPIFF filesystem, but doesn't require
+  // a completely new upload
+  server.onFileUpload([](){
+      
+      if(server.uri() != "/update") return;
+      HTTPUpload& upload = server.upload();
+      if(upload.status == UPLOAD_FILE_START){
+        Serial.setDebugOutput(true);
+        WiFiUDP::stopAll();
+        Serial.printf("Update: %s\n", upload.filename.c_str());
+
+        //  (1) Rename the old file
+        if (SPIFFS.exists(upload.filename.c_str()))
+        {
+          SPIFFS.rename(upload.filename.c_str(),(upload.filename+".BAK").c_str());
+        }
+        //  (2) Create the new file
+        f = SPIFFS.open(upload.filename.c_str(), "w+");
+        uploadError = "";
+        
+      } else if(upload.status == UPLOAD_FILE_WRITE){
+        // (1) Append this buffer to the end of the open file
+        if (f.write(upload.buf, upload.currentSize) != upload.currentSize){
+          uploadError = "Error writing file chunk";
+        }
+        else
+        {
+          Serial.printf("Wrote bytes: %d\n", upload.currentSize);
+        }
+        
+      } else if(upload.status == UPLOAD_FILE_END){
+
+      // Close the file
+        f.close();
+        // (1) Check if the update was successful
+        // (2) If Successful, close the file and delete the renamed one
+        // (3) If failed, close and delete the new file and move the renamed one back in place
+        if (uploadError == "")
+        {
+          Serial.printf("Upload error: %s\n", uploadError.c_str());
+          SPIFFS.remove((upload.filename+".BAK").c_str());
+        }
+        else
+        {
+          Serial.printf("Error uploading new file putting old file back in place: %s\n", upload.filename.c_str());
+          SPIFFS.remove((upload.filename).c_str());
+          SPIFFS.rename((upload.filename+".BAK").c_str(), upload.filename.c_str());
+        }
+        
+        Serial.setDebugOutput(false);
+      }
+      yield();
+    });
+    server.on("/update", HTTP_POST, [](){
+      server.sendHeader("Connection", "close");
+      server.sendHeader("Access-Control-Allow-Origin", "*");
+
+      //server.send(200, "text/plain", (Update.hasError())?"FAIL":"OK");
+      // TODO: Send back information based on whether the upload was successful.
+      server.send(200, "text/plain", uploadError);
+      
+      //ESP.restart(); // I don't think we need to restart after every file upload
+      
+    });
 
   
   // Handle the AP vs client interactions
