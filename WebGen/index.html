@@ -15,12 +15,15 @@
 
   <!-- FONT
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
+  <!--
   <link href="//fonts.googleapis.com/css?family=Raleway:400,300,600" rel="stylesheet" type="text/css">
-
+  -->
+  
   <!-- CSS
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
   <link rel="stylesheet" href="css/normalize.css">
   <link rel="stylesheet" href="css/skeleton.css">
+  <link rel="stylesheet" href="css/fonts.css">
 
   <!-- Favicon
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->
@@ -37,6 +40,13 @@
           <h4 class="intro-heading">Stop coding non-responsive sites. Let users view sites from anywhere.</h4>
           <a class="button button-primary"
   href="/buttonlink.html">ItsAButton!</a>
+  		  <form action="/set_ssid_password.html" method="POST">
+		  	<label for="ssid">SSID:</label>
+  			<input type="text" name="ssid" id="ssid">
+			<label for="password">Password:</label>
+		    <input type="password" name="password" id="password">
+		    <input class="button button-primary" type="submit" value="Submit">
+		  </form>
         </div>
         <div class="one-half column phones">
           <h4 class="intro-heading">Should have a logo here.</h4>
@@ -44,8 +54,7 @@
       </div>
     </div>
   </div>
-
-
+  
 
 <!-- End Document
   –––––––––––––––––––––––––––––––––––––––––––––––––– -->

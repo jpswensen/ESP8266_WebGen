@@ -1,5 +1,6 @@
 import os
 import binascii
+import re
 
 def generateVariableArrayNameFromFilename(filename):
     retval = ""
@@ -92,7 +93,10 @@ def getMimeTypeFromFilename(filename):
         
     return retval
         
-    
+
+# Print out the extern header
+print "extern ESP8266WebServer server;\n\n"
+
 # Get a complete list of files and generate their C-code array equivalents
 for (dir, _, files) in os.walk("./"):
      for f in files:
