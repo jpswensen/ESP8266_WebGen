@@ -1,5 +1,12 @@
-extern ESP8266WebServerFast server;
+extern ESP8266WebServer server;
 
+
+char plainMime[] PROGMEM = "text/plain";
+char htmlMime[] PROGMEM = "text/html";
+char cssMime [] PROGMEM = "text/css";
+char jsMime[] PROGMEM = "text/html";
+char pngMime[] PROGMEM = "image/png";
+char jpgMime[] PROGMEM = "image/jpeg";
 
 PROGMEM prog_char _about_html[] = {
  0x3c, 0x21, 0x44, 0x4f, 0x43, 0x54, 0x59, 0x50, 0x45, 0x20, 0x68, 0x74, 0x6d, 0x6c, 0x3e, 0x0a,
@@ -6678,61 +6685,45 @@ PROGMEM prog_char js_jquery_______min_js[] = {
 };
 unsigned int js_jquery_______min_js_len = 84345;
 
-char htmlMime[] PROGMEM = "text/html";
-char cssMime [] PROGMEM = "text/css";
-char jsMime[] PROGMEM = "text/html";
-char pngMime[] PROGMEM = "image/png";
-
 void setupPageHandlers() {
 
   server.on( "/", []() {
-//    server.send_P(200, htmlMime, _index_html, _index_html_len);
-    sendBinaryFile("text/html", _index_html, _index_html_len);
-  });
+    server.send_P(200, htmlMime, _index_html, _index_html_len); });
 
   server.on( "/about.html", []() {
-//    server.send_P(200, htmlMime, _about_html, _about_html_len);
-    sendBinaryFile("text/html", _about_html, _about_html_len);
+    server.send_P(200, htmlMime, _about_html, _about_html_len);
   });
 
   server.on( "/index.html", []() {
-//    server.send_P(200, htmlMime, _index_html, _index_html_len);
-    sendBinaryFile("text/html", _index_html, _index_html_len);
+    server.send_P(200, htmlMime, _index_html, _index_html_len);
   });
 
   server.on( "/settings.html", []() {
-//    server.send_P(200, htmlMime, _settings_html, _settings_html_len);
-    sendBinaryFile("text/html", _settings_html, _settings_html_len);
+    server.send_P(200, htmlMime, _settings_html, _settings_html_len);
   });
 
   server.on( "/css/dropdown.css", []() {
-//    server.send_P(200, cssMime, css_dropdown_css, css_dropdown_css_len);
-    sendBinaryFile("text/css", css_dropdown_css, css_dropdown_css_len);
+    server.send_P(200, cssMime, css_dropdown_css, css_dropdown_css_len);
   });
 
   server.on( "/css/fonts.css", []() {
-//    server.send_P(200, cssMime, css_fonts_css, css_fonts_css_len);
-    sendBinaryFile("text/css", css_fonts_css, css_fonts_css_len);
+    server.send_P(200, cssMime, css_fonts_css, css_fonts_css_len);
   });
 
   server.on( "/css/normalize.min.css", []() {
-//    server.send_P(200, cssMime, css_normalize_min_css, css_normalize_min_css_len);
-    sendBinaryFile("text/css", css_normalize_min_css, css_normalize_min_css_len);
+    server.send_P(200, cssMime, css_normalize_min_css, css_normalize_min_css_len);
   });
 
   server.on( "/css/skeleton.min.css", []() {
-//    server.send_P(200, cssMime, css_skeleton_min_css, css_skeleton_min_css_len);
-    sendBinaryFile("text/css", css_skeleton_min_css, css_skeleton_min_css_len);
+    server.send_P(200, cssMime, css_skeleton_min_css, css_skeleton_min_css_len);
   });
 
   server.on( "/images/favicon.png", []() {
-//    server.send_P(200, pngMime, images_favicon_png, images_favicon_png_len);
-    sendBinaryFile("image/png", images_favicon_png, images_favicon_png_len);
+    server.send_P(200, pngMime, images_favicon_png, images_favicon_png_len);
   });
 
   server.on( "/js/jquery-2.1.4.min.js", []() {
-//    server.send_P(200, jsMime, js_jquery_______min_js, js_jquery_______min_js_len);
-    sendBinaryFile("text/plain", js_jquery_______min_js, js_jquery_______min_js_len);
+    server.send_P(200, plainMime, js_jquery_______min_js, js_jquery_______min_js_len);
   });
 
 }

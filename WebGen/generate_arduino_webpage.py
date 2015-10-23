@@ -2,6 +2,8 @@ import os
 import binascii
 import re
 
+haveLatestFromGithub = 1
+
 def generateVariableArrayNameFromFilename(filename):
     retval = ""
     pathComps = os.path.split(filename[2:])
@@ -60,7 +62,13 @@ def generateRootLambda():
     
     lambdaText = ""
     lambdaText += "\tserver.on( \"/\", []() {\n"
-    lambdaText += "\t\tsendBinaryFile(\"text/html\", _index_html, _index_html_len);\n"
+
+    if haveLatestFromGithub == 1:
+        lambdaText += "\t\tserver.send_P(200, htmlMime, _index_html, _index_html_len);"
+    else:
+        lambdaText += "\t\tsendBinaryFile(\"text/html\", _index_html, _index_html_len);\n"
+
+
     lambdaText += "\t});\n"
 
     return lambdaText
@@ -70,13 +78,33 @@ def generateLambdaFromFilename(filename):
     lengthName = generateVariableLengthNameFromFilename(filename)
     
     mimeType = getMimeTypeFromFilename(filename)
+    PROGMEMmimeType = getPROGMEMMimeTypeFromFilename(filename)
     
     lambdaText = ""
     lambdaText += "\tserver.on( \"" + filename[1:] + "\", []() {\n"
-    lambdaText += "\t\tsendBinaryFile(\"" + mimeType + "\", " + variableName + ", " + lengthName + ");\n"
+
+    if haveLatestFromGithub == 1:
+        lambdaText += "\t\tserver.send_P(200, " + PROGMEMmimeType + ", " +  variableName + ", " + lengthName + ");\n"
+    else:
+        lambdaText += "\t\tsendBinaryFile(\"" + mimeType + "\", " + variableName + ", " + lengthName + ");\n"
     lambdaText += "\t});\n"
 
     return lambdaText
+
+def getPROGMEMMimeTypeFromFilename(filename):
+    retval = ""
+    if filename.endswith("html"):
+        retval = "htmlMime"
+    elif filename.endswith("css"):
+        retval = "cssMime"
+    elif filename.endswith("png"):
+        retval = "pngMime"
+    elif filename.endswith("jpg") or filename.endswith("jpeg"):
+        retval = "jpegMime"
+    else:
+        retval = "plainMime"
+        
+    return retval
 
 def getMimeTypeFromFilename(filename):
     retval = ""
@@ -92,10 +120,23 @@ def getMimeTypeFromFilename(filename):
         retval = "text/plain"
         
     return retval
+
+
+
         
 
 # Print out the extern header
-print "extern ESP8266WebServerFast server;\n\n"
+print "extern ESP8266WebServer server;\n\n"
+
+if haveLatestFromGithub == 1:
+    print "char plainMime[] PROGMEM = \"text/plain\";"
+    print "char htmlMime[] PROGMEM = \"text/html\";"
+    print "char cssMime [] PROGMEM = \"text/css\";"
+    print "char jsMime[] PROGMEM = \"text/html\";"
+    print "char pngMime[] PROGMEM = \"image/png\";"
+    print "char jpgMime[] PROGMEM = \"image/jpeg\";\n"
+
+
 
 # Get a complete list of files and generate their C-code array equivalents
 for (dir, _, files) in os.walk("./"):

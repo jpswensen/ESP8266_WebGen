@@ -1,6 +1,6 @@
 #include "WebFramework.h"
 
-extern ESP8266WebServerFast server;
+extern ESP8266WebServer server;
 
 void sendBinaryFile(String mimeType, const char *realword, int realLen)
 {
